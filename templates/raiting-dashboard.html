@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sinf Reytingi Doskasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d14;
+    --panel: #131722;
+    --panel-hover: #191f2e;
+    --line: #21283b;
+    --text: #f0f2f8;
+    --sub: #828ca4;
+
+    --gold: #ffb800;
+    --gold-glow: rgba(255, 184, 0, 0.18);
+    --silver: #cbd5e1;
+    --silver-glow: rgba(203, 213, 225, 0.12);
+    --bronze: #f97316;
+    --bronze-glow: rgba(249, 115, 22, 0.12);
+
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.25);
+    --up: #10b981;
+    --up-bg: rgba(16, 185, 129, 0.15);
+    --down: #ef4444;
+    --down-bg: rgba(239, 68, 68, 0.15);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+      radial-gradient(1000px 600px at 50% -10%, #1a1f36 0%, transparent 80%),
+      radial-gradient(600px 400px at 85% 90%, #111526 0%, transparent 70%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    padding: 32px 16px 60px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 680px;
+  }
+
+  header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 20px 24px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  .eyebrow {
+    color: #818cf8;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .eyebrow::before {
+    content: "🎓";
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .sub {
+    color: var(--sub);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sub);
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--down);
+    box-shadow: 0 0 8px var(--down);
+    flex: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .status.on .dot {
+    background: var(--up);
+    box-shadow: 0 0 8px var(--up);
+  }
+
+  .board {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 12px;
+    position: relative;
+    min-height: 120px;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .empty {
+    padding: 48px 16px;
+    text-align: center;
+    color: var(--sub);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 44px 44px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+    position: relative;
+    transition: background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .row:hover {
+    background: var(--panel-hover);
+  }
+
+  /* Podium Top 3 Styling */
+  .row.top1 {
+    background: linear-gradient(90deg, rgba(255, 184, 0, 0.08) 0%, rgba(255, 184, 0, 0.01) 100%);
+    border-color: rgba(255, 184, 0, 0.25);
+  }
+
+  .row.top2 {
+    background: linear-gradient(90deg, rgba(203, 213, 225, 0.06) 0%, rgba(203, 213, 225, 0.01) 100%);
+    border-color: rgba(203, 213, 225, 0.2);
+  }
+
+  .row.top3 {
+    background: linear-gradient(90deg, rgba(249, 115, 22, 0.06) 0%, rgba(249, 115, 22, 0.01) 100%);
+    border-color: rgba(249, 115, 22, 0.2);
+  }
+
+  .rank-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--sub);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .row.top1 .rank-badge {
+    background: var(--gold);
+    color: #000;
+    box-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  .row.top2 .rank-badge {
+    background: var(--silver);
+    color: #000;
+    box-shadow: 0 0 12px var(--silver-glow);
+  }
+
+  .row.top3 .rank-badge {
+    background: var(--bronze);
+    color: #fff;
+    box-shadow: 0 0 12px var(--bronze-glow);
+  }
+
+  .avatar-wrap {
+    position: relative;
+    width: 44px;
+    height: 44px;
+  }
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #1e2538;
+    border: 2px solid var(--line);
+    flex: none;
+  }
+
+  .row.top1 .avatar { border-color: var(--gold); }
+  .row.top2 .avatar { border-color: var(--silver); }
+  .row.top3 .avatar { border-color: var(--bronze); }
+
+  .avatar.fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    background: linear-gradient(135deg, #2a334d 0%, #1a2033 100%);
+  }
+
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .name {
+    font-weight: 700;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.01em;
+  }
+
+  .bar-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .row.top1 .bar-fill { background: linear-gradient(90deg, #ffb800 0%, #fef08a 100%); }
+
+  .score-col {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  .score {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+    min-width: 48px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    opacity: 0;
+    transform: scale(0.8) translateY(-4px);
+    pointer-events: none;
+  }
+
+  .delta.show {
+    animation: pop 1.2s ease forwards;
+  }
+
+  .delta.pos {
+    color: var(--up);
+    background: var(--up-bg);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .delta.neg {
+    color: var(--down);
+    background: var(--down-bg);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  @keyframes pop {
+    0% { opacity: 0; transform: scale(0.8) translateY(-4px); }
+    15% { opacity: 1; transform: scale(1) translateY(0); }
+    75% { opacity: 1; transform: scale(1) translateY(0); }
+    100% { opacity: 0; transform: scale(0.9) translateY(-6px); }
+  }
+
+  .glow {
+    animation: pulseGlow 0.8s ease;
+  }
+
+  @keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 var(--accent-glow); border-color: var(--accent); }
+    50% { box-shadow: 0 0 20px 2px var(--accent-glow); border-color: var(--accent); }
+    100% { box-shadow: 0 0 0 0 transparent; }
+  }
+
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  button {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  button:hover {
+    border-color: #475569;
+    background: var(--panel-hover);
+    transform: translateY(-1px);
+  }
+
+  button:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 16px 10px 40px; }
+    header { flex-direction: column; align-items: stretch; }
+    .status { self-align: flex-start; align-self: flex-start; }
+    .row { grid-template-columns: 32px 38px 1fr auto; gap: 10px; padding: 10px; }
+    .avatar-wrap, .avatar { width: 38px; height: 38px; }
+    .score { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Sinf reytingi</div>
+      <h1>Kim eng ko'p ball to'pladi?</h1>
+      <div class="sub">Ball o'zgarsa, o'rinlar jonli almashadi</div>
+    </div>
+    <div class="status" id="status">
+      <span class="dot"></span>
+      <span id="statusText">ulanmoqda...</span>
+    </div>
+  </header>
+
+  <div class="board" id="board">
+    <div class="empty">Ma'lumot kutilmoqda...</div>
+  </div>
+
+  <div class="controls">
+    <button id="reconnectBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+      Qayta ulanish
+    </button>
+  </div>
+</div>
+
+<script>
+/**
+ * WEBSOCKET TARGET PROTOCOL:
+ * Incoming payload: { "message": [ { "id": 1, "fullname": "...", "photo": "...", "ball": 100 }, ... ] }
+ */
+const WS_URL = "ws://10.40.5.129:8000/ws/dashboard/";
+
+let previousScoresMap = new Map(); // id -> ball
+let socket = null;
+let reconnectTimer = null;
+
+const board = document.getElementById('board');
+const statusEl = document.getElementById('status');
+const statusText = document.getElementById('statusText');
+
+function setStatus(connected, label) {
+  statusEl.classList.toggle('on', connected);
+  statusText.textContent = label;
+}
+
+function connect() {
+  clearTimeout(reconnectTimer);
+  setStatus(false, "ulanmoqda...");
+
+  try {
+    socket = new WebSocket(WS_URL);
+  } catch (err) {
+    handleCloseOrError();
+    return;
+  }
+
+  socket.addEventListener('open', () => {
+    setStatus(true, "onlayn");
+  });
+
+  socket.addEventListener('close', () => {
+    handleCloseOrError();
+  });
+
+  socket.addEventListener('error', () => {
+    if (socket) socket.close();
+  });
+
+  socket.addEventListener('message', (event) => {
+    let payload;
+    try {
+      payload = JSON.parse(event.data);
+    } catch (e) {
+      console.error("Noto'g'ri JSON formati keldi:", event.data);
+      return;
+    }
+
+    // Extract message array strictly matching Django response format
+    if (payload && Array.isArray(payload.message)) {
+      handleLeaderboardUpdate(payload.message);
+    } else {
+      console.warn("Payload ichida 'message' massivi topilmadi:", payload);
+    }
+  });
+}
+
+function handleCloseOrError() {
+  setStatus(false, "uzildi — qayta urinilmoqda");
+  clearTimeout(reconnectTimer);
+  reconnectTimer = setTimeout(connect, 3000);
+}
+
+document.getElementById('reconnectBtn').addEventListener('click', () => {
+  if (socket) socket.close();
+  connect();
+});
+
+function initials(name) {
+  if (!name || typeof name !== 'string') return '?';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[1][0]).toUpperCase();
+}
+
+function medalClass(index) {
+  if (index === 0) return 'top1';
+  if (index === 1) return 'top2';
+  if (index === 2) return 'top3';
+  return '';
+}
+
+function handleLeaderboardUpdate(newList) {
+  if (!Array.isArray(newList) || newList.length === 0) {
+    board.innerHTML = '<div class="empty">Talabalar ro\'yxati bo\'sh</div>';
+    previousScoresMap.clear();
+    return;
+  }
+
+  // 1. Calculate Deltas by comparing against previous scores
+  const deltas = new Map();
+  newList.forEach(st => {
+    const currentScore = Number(st.ball) || 0;
+    if (previousScoresMap.has(st.id)) {
+      const prevScore = previousScoresMap.get(st.id);
+      const diff = currentScore - prevScore;
+      if (diff !== 0) {
+        deltas.set(st.id, diff);
+      }
+    }
+  });
+
+  // Update stored state for next iteration
+  const newScoresMap = new Map();
+  newList.forEach(st => newScoresMap.set(st.id, Number(st.ball) || 0));
+  previousScoresMap = newScoresMap;
+
+  // 2. Capture layout state (FLIP Animation Preparation)
+  const prevRects = {};
+  board.querySelectorAll('.row').forEach(el => {
+    const id = el.dataset.id;
+    if (id) {
+      prevRects[id] = el.getBoundingClientRect();
+    }
+  });
+
+  // 3. Sort students descending by ball
+  const sorted = [...newList].sort((a, b) => (Number(b.ball) || 0) - (Number(a.ball) || 0));
+  const maxBall = Math.max(...sorted.map(s => Number(s.ball) || 0), 1);
+
+  // 4. Render new list DOM
+  board.innerHTML = '';
+  sorted.forEach((s, i) => {
+    const currentBall = Number(s.ball) || 0;
+    const delta = deltas.get(s.id);
+
+    const row = document.createElement('div');
+    row.className = `row ${medalClass(i)}`;
+    row.dataset.id = s.id;
+
+    // Photo & Avatar Fallback logic
+    const photoUrl = (s.photo && typeof s.photo === 'string' && s.photo.trim() !== '') ? s.photo : null;
+    const avatarHtml = photoUrl
+      ? `<img class="avatar" src="${photoUrl}" alt="${s.fullname || ''}" onerror="this.onerror=null; this.outerHTML='<div class=&quot;avatar fallback&quot;>${initials(s.fullname)}</div>';">`
+      : `<div class="avatar fallback">${initials(s.fullname)}</div>`;
+
+    // Delta badge HTML
+    let deltaHtml = '';
+    if (delta !== undefined) {
+      const isPos = delta > 0;
+      const sign = isPos ? '+' : '';
+      const cls = isPos ? 'pos' : 'neg';
+      deltaHtml = `<span class="delta ${cls} show">${sign}${delta}</span>`;
+    } else {
+      deltaHtml = `<span class="delta"></span>`;
+    }
+
+    const progressPct = Math.max(0, Math.min(100, (currentBall / maxBall) * 100)).toFixed(0);
+
+    row.innerHTML = `
+      <div class="rank-badge">${i + 1}</div>
+      <div class="avatar-wrap">
+        ${avatarHtml}
+      </div>
+      <div class="who">
+        <div class="name">${s.fullname || 'Ismsiz talaba'}</div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: ${progressPct}%"></div>
+        </div>
+      </div>
+      <div class="score-col">
+        ${deltaHtml}
+        <div class="score">${currentBall}</div>
+      </div>
+    `;
+
+    board.appendChild(row);
+  });
+
+  // 5. Execute FLIP Animations & Glow Effects
+  board.querySelectorAll('.row').forEach(el => {
+    const id = el.dataset.id;
+    const prev = prevRects[id];
+
+    if (prev) {
+      const next = el.getBoundingClientRect();
+      const dy = prev.top - next.top;
+      if (dy !== 0) {
+        el.animate(
+          [
+            { transform: `translateY(${dy}px)` },
+            { transform: 'translateY(0)' }
+          ],
+          {
+            duration: 600,
+            easing: 'cubic-bezier(0.16, 1, 0.3, 1)'
+          }
+        );
+      }
+    }
+
+    if (id && deltas.has(Number(id))) {
+      el.classList.add('glow');
+      setTimeout(() => el.classList.remove('glow'), 800);
+    }
+  });
+}
+
+// Initial connection trigger
+connect();
+</script>
+</body>
+</html>
